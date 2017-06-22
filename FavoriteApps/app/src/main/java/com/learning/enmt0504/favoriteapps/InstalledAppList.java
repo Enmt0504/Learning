@@ -40,17 +40,20 @@ public class InstalledAppList {
 
             PackageManager packageManager = activity.getPackageManager();
             String label = packageManager.getApplicationLabel(info).toString();
+            String packageName = info.packageName;
             Drawable icon = packageManager.getApplicationIcon(info);
 
-            list.add(buildInstalledAppInfo(label, icon));
+            list.add(buildInstalledAppInfo(label, packageName, icon));
         }
 
         return list;
     }
 
-    private static InstalledApp buildInstalledAppInfo(String label, Drawable icon) {
+    private static InstalledApp buildInstalledAppInfo(String label, String packageName,
+                                                      Drawable icon) {
         InstalledApp installedApp = new InstalledApp();
         installedApp.setLabel(label);
+        installedApp.setPackageName(packageName);
         installedApp.setIcon(icon);
         installedApp.setFavorite(false);
 

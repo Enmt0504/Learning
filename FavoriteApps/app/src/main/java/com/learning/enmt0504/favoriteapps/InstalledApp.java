@@ -14,6 +14,7 @@ import java.io.Serializable;
 
 public class InstalledApp implements Serializable {
     private String label;
+    private String packageName;
     private byte[] icon;
     private boolean favorite;
 
@@ -26,6 +27,14 @@ public class InstalledApp implements Serializable {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 
     public Drawable getIcon() {

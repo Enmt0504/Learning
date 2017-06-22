@@ -96,7 +96,9 @@ public class AppDetailsFragment extends DetailsFragment {
             @Override
             public void onActionClicked(Action action) {
                 if (action.getId() == ACTION_START_APP) {
-                    Toast.makeText(getActivity(), "start app", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.setClassName(mSelectedApp.getPackageName(), mSelectedApp.getPackageName()+".MainActivity");
+                    startActivity(intent);
                 } else if (action.getId() == ACTION_ADD_FAVORITE) {
                     Toast.makeText(getActivity(), "add favorite", Toast.LENGTH_SHORT).show();
                 }
