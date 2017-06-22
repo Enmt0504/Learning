@@ -38,8 +38,9 @@ public class InstalledAppList {
                 continue;
             }
 
-            String label = activity.getPackageManager().getApplicationLabel(info).toString();
-            Drawable icon = activity.getPackageManager().getApplicationIcon(info);
+            PackageManager packageManager = activity.getPackageManager();
+            String label = packageManager.getApplicationLabel(info).toString();
+            Drawable icon = packageManager.getApplicationIcon(info);
 
             list.add(buildInstalledAppInfo(label, icon));
         }

@@ -1,7 +1,11 @@
 package com.learning.enmt0504.favoriteapps;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 
 /**
@@ -10,7 +14,7 @@ import java.io.Serializable;
 
 public class InstalledApp implements Serializable {
     private String label;
-    private Drawable icon;
+    private byte[] icon;
     private boolean favorite;
 
     public InstalledApp() {
@@ -25,11 +29,23 @@ public class InstalledApp implements Serializable {
     }
 
     public Drawable getIcon() {
-        return icon;
+        if (icon != null) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            Drawable iconDrawable = new BitmapDrawable(BitmapFactory.decodeByteArray(icon, 0, icon.length, options));
+            return iconDrawable;
+        }
+
+        return null;
     }
 
     public void setIcon(Drawable icon) {
-        this.icon = icon;
+        if (icon != null) {
+            Bitmap bitmapIcon = ((BitmapDrawable) icon).getBitmap();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmapIcon.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+
+            this.icon = bos.toByteArray();
+        }
     }
 
     public boolean isFavorite() {

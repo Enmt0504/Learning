@@ -2,6 +2,7 @@ package com.learning.enmt0504.favoriteapps;
 
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BackgroundManager;
@@ -17,7 +18,6 @@ import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by enomoto on 17/06/21.
@@ -101,8 +101,13 @@ public class MainFragment extends BrowseFragment {
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
 
             if (item instanceof InstalledApp) {
-                Toast.makeText(getActivity(), ((InstalledApp) item).getLabel()+" clicked", Toast.LENGTH_SHORT)
-                        .show();
+                InstalledApp installedApp = (InstalledApp) item;
+                Log.d(TAG, "Item:"+item.toString());
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.putExtra(DetailsActivity.APP, installedApp);
+
+                Log.d(TAG, "startActivity");
+                getActivity().startActivity(intent);
             }
         }
     }
