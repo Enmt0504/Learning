@@ -48,7 +48,7 @@ public class CardPresenter extends Presenter {
 
         cardView.setTitleText(installedApp.getLabel());
         cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT);
-        cardView.setMainImage(installedApp.getIcon());
+        cardView.setMainImage(installedApp.getBanner());
     }
 
     @Override

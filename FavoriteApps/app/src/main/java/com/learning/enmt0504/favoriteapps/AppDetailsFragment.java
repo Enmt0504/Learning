@@ -76,7 +76,7 @@ public class AppDetailsFragment extends DetailsFragment {
         final DetailsOverviewRow row = new DetailsOverviewRow(mSelectedApp);
         row.setImageDrawable(getResources().getDrawable(R.color.default_background));
 
-        row.setImageDrawable(mSelectedApp.getIcon());
+        row.setImageDrawable(mSelectedApp.getBanner());
 
         mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
 
@@ -97,7 +97,7 @@ public class AppDetailsFragment extends DetailsFragment {
             public void onActionClicked(Action action) {
                 if (action.getId() == ACTION_START_APP) {
                     Intent intent = new Intent();
-                    intent.setClassName(mSelectedApp.getPackageName(), mSelectedApp.getPackageName()+".MainActivity");
+                    intent.setClassName(mSelectedApp.getPackageName(), mSelectedApp.getActivityName());
                     startActivity(intent);
                 } else if (action.getId() == ACTION_ADD_FAVORITE) {
                     Toast.makeText(getActivity(), "add favorite", Toast.LENGTH_SHORT).show();
