@@ -26,6 +26,7 @@ public class AppDetailsFragment extends DetailsFragment {
 
     private static final int ACTION_START_APP = 1;
     private static final int ACTION_ADD_FAVORITE = 2;
+    private static final int ACTION_REMOVE_FAVORITE = 3;
 
     private InstalledApp mSelectedApp;
 
@@ -83,7 +84,13 @@ public class AppDetailsFragment extends DetailsFragment {
         mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
 
         row.addAction(new Action(ACTION_START_APP, getResources().getString(R.string.start_app)));
-        row.addAction(new Action(ACTION_ADD_FAVORITE, getResources().getString(R.string.add_favorite)));
+
+        SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+        if (sp.getBoolean(mSelectedApp.getPackageName(), false)) {
+            row.addAction(new Action(ACTION_REMOVE_FAVORITE, getResources().getString(R.string.remove_favorite)));
+        } else {
+            row.addAction(new Action(ACTION_ADD_FAVORITE, getResources().getString(R.string.add_favorite)));
+        }
 
         mAdapter.add(row);
     }
@@ -101,18 +108,32 @@ public class AppDetailsFragment extends DetailsFragment {
                     Intent intent = new Intent();
                     intent.setClassName(mSelectedApp.getPackageName(), mSelectedApp.getActivityName());
                     startActivity(intent);
-                } else if (action.getId() == ACTION_ADD_FAVORITE) {
-                    SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putBoolean(mSelectedApp.getPackageName(), true);
-                    if (editor.commit() == true) {
-                        Toast.makeText(getActivity(), "add favorite", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "failed", Toast.LENGTH_SHORT).show();
-                    }
+                } else {
+                    updateFavorite(action.getId());
                 }
             }
         });
         mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
+    }
+
+    private void updateFavorite(long id) {
+        SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+        if (id == ACTION_ADD_FAVORITE) {
+            editor.putBoolean(mSelectedApp.getPackageName(), true);
+            if (editor.commit() == true) {
+                Toast.makeText(getActivity(), "add favorite", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), "failed", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            editor.remove(mSelectedApp.getPackageName());
+            if (editor.commit() == true) {
+                Toast.makeText(getActivity(), "remove favorite", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), "failed", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

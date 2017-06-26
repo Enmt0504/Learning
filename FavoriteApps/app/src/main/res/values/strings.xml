@@ -3,4 +3,5 @@
     <string name="browse_title">Favorite Apps</string>
     <string name="start_app">起動</string>
     <string name="add_favorite">Add Favorite</string>
+    <string name="remove_favorite">Remove Favorite</string>
 </resources>
