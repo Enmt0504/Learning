@@ -70,7 +70,6 @@ public class InstalledAppList {
         installedApp.setActivityName(activityName);
         installedApp.setIcon(icon);
         installedApp.setBanner(banner);
-        installedApp.setFavorite(false);
 
         return installedApp;
     }

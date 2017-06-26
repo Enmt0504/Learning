@@ -2,7 +2,9 @@ package com.learning.enmt0504.favoriteapps;
 
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BackgroundManager;
@@ -18,6 +20,9 @@ import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Created by enomoto on 17/06/21.
@@ -39,6 +44,11 @@ public class MainFragment extends BrowseFragment {
         prepareBackgroundManager();
 
         setupUIElements();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         loadRows();
 
@@ -55,14 +65,15 @@ public class MainFragment extends BrowseFragment {
         List<InstalledApp> list = InstalledAppList.setupApps(getActivity());
 
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-        CardPresenter cardPresenter = new CardPresenter();
 
-        ArrayObjectAdapter listRowAdapterFavorite = new ArrayObjectAdapter(cardPresenter);
-        ArrayObjectAdapter listRowAdapterApps = new ArrayObjectAdapter(cardPresenter);
+        SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+
+        ArrayObjectAdapter listRowAdapterFavorite = new ArrayObjectAdapter(new CardPresenter());
+        ArrayObjectAdapter listRowAdapterApps = new ArrayObjectAdapter(new CardPresenter());
         for (int i = 0; i < list.size(); i++) {
             InstalledApp installedApp = list.get(i);
             listRowAdapterApps.add(installedApp);
-            if (installedApp.isFavorite()) {
+            if (sp.getBoolean(installedApp.getPackageName(), false) == true) {
                 listRowAdapterFavorite.add(installedApp);
             }
         }

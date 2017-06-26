@@ -1,6 +1,8 @@
 package com.learning.enmt0504.favoriteapps;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BackgroundManager;
@@ -100,7 +102,14 @@ public class AppDetailsFragment extends DetailsFragment {
                     intent.setClassName(mSelectedApp.getPackageName(), mSelectedApp.getActivityName());
                     startActivity(intent);
                 } else if (action.getId() == ACTION_ADD_FAVORITE) {
-                    Toast.makeText(getActivity(), "add favorite", Toast.LENGTH_SHORT).show();
+                    SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putBoolean(mSelectedApp.getPackageName(), true);
+                    if (editor.commit() == true) {
+                        Toast.makeText(getActivity(), "add favorite", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "failed", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

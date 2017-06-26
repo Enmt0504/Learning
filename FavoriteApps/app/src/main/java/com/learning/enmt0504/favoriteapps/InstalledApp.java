@@ -18,7 +18,6 @@ public class InstalledApp implements Serializable {
     private String activityName;
     private byte[] icon;
     private byte[] banner;
-    private boolean favorite;
 
     public InstalledApp() {
     }
@@ -85,14 +84,6 @@ public class InstalledApp implements Serializable {
 
             this.banner = bos.toByteArray();
         }
-    }
-
-    public boolean isFavorite() {
-        return favorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
     }
 
     @Override
