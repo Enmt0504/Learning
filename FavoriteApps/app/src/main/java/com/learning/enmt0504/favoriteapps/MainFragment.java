@@ -35,6 +35,7 @@ public class MainFragment extends BrowseFragment {
     private Drawable mDefaultBackground;
     private DisplayMetrics mMetrics;
     private BackgroundManager mBackgroundManager;
+    private List<InstalledApp> mList;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -44,15 +45,16 @@ public class MainFragment extends BrowseFragment {
         prepareBackgroundManager();
 
         setupUIElements();
+
+        loadRows();
+
+        setupEventListeners();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        loadRows();
-
-        setupEventListeners();
+        setFavorite();
     }
 
     @Override
@@ -62,24 +64,16 @@ public class MainFragment extends BrowseFragment {
     }
 
     private void loadRows() {
-        List<InstalledApp> list = InstalledAppList.setupApps(getActivity());
+        mList = InstalledAppList.setupApps(getActivity());
 
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
-        SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
-
-        ArrayObjectAdapter listRowAdapterFavorite = new ArrayObjectAdapter(new CardPresenter());
         ArrayObjectAdapter listRowAdapterApps = new ArrayObjectAdapter(new CardPresenter());
-        for (int i = 0; i < list.size(); i++) {
-            InstalledApp installedApp = list.get(i);
+        for (int i = 0; i < mList.size(); i++) {
+            InstalledApp installedApp = mList.get(i);
             listRowAdapterApps.add(installedApp);
-            if (sp.getBoolean(installedApp.getPackageName(), false) == true) {
-                listRowAdapterFavorite.add(installedApp);
-            }
         }
-        HeaderItem header = new HeaderItem(0, InstalledAppList.CATEGORY[0]);
-        mRowsAdapter.add(new ListRow(header, listRowAdapterFavorite));
-        header = new HeaderItem(1, InstalledAppList.CATEGORY[1]);
+        HeaderItem header = new HeaderItem(1, InstalledAppList.CATEGORY[1]);
         mRowsAdapter.add(new ListRow(header, listRowAdapterApps));
 
         setAdapter(mRowsAdapter);
@@ -92,6 +86,24 @@ public class MainFragment extends BrowseFragment {
         mDefaultBackground = getResources().getDrawable(R.color.default_background);
         mMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+    }
+
+    private void setFavorite() {
+        SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+
+        ArrayObjectAdapter listRowAdapterFavorite = new ArrayObjectAdapter(new CardPresenter());
+        for (int i = 0; i < mList.size(); i++) {
+            InstalledApp installedApp = mList.get(i);
+            if (sp.getBoolean(installedApp.getPackageName(), false) == true) {
+                listRowAdapterFavorite.add(installedApp);
+            }
+        }
+        HeaderItem header = new HeaderItem(0, InstalledAppList.CATEGORY[0]);
+        if (mRowsAdapter.size() < InstalledAppList.CATEGORY.length) {
+            mRowsAdapter.add(0, new ListRow(header, listRowAdapterFavorite));
+        } else {
+            mRowsAdapter.replace(0, new ListRow(header, listRowAdapterFavorite));
+        }
     }
 
     private void setupUIElements() {
