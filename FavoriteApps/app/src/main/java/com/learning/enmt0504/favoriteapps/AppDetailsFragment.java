@@ -1,5 +1,6 @@
 package com.learning.enmt0504.favoriteapps;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -61,6 +62,8 @@ public class AppDetailsFragment extends DetailsFragment {
         super.onCreate(savedInstanceState);
 
         prepareBackgroundManager();
+
+        getActivity().setResult(DetailsActivity.FAVORITE_UNCHANGED);
 
         mSelectedApp = (InstalledApp) getActivity().getIntent()
                 .getSerializableExtra(DetailsActivity.APP);
@@ -146,6 +149,7 @@ public class AppDetailsFragment extends DetailsFragment {
             if (editor.commit() == true) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.add_favorite),
                         Toast.LENGTH_SHORT).show();
+                getActivity().setResult(DetailsActivity.FAVORITE_CHANGED);
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.failed),
                         Toast.LENGTH_SHORT).show();
@@ -155,6 +159,7 @@ public class AppDetailsFragment extends DetailsFragment {
             if (editor.commit() == true) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.remove_favorite),
                         Toast.LENGTH_SHORT).show();
+                getActivity().setResult(DetailsActivity.FAVORITE_CHANGED);
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.failed),
                         Toast.LENGTH_SHORT).show();

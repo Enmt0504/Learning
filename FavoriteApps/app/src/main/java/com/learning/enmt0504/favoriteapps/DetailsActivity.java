@@ -9,6 +9,8 @@ import android.os.Bundle;
 
 public class DetailsActivity extends Activity {
     public static final String APP = "App";
+    public static final int FAVORITE_UNCHANGED = 0;
+    public static final int FAVORITE_CHANGED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

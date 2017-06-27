@@ -2,6 +2,7 @@ package com.learning.enmt0504.favoriteapps;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,8 @@ import android.view.ViewGroup;
 public class MainFragment extends BrowseFragment {
     private static final String TAG = "MainFragment";
 
+    private static int REQUEST_CODE = 123;
+
     private ArrayObjectAdapter mRowsAdapter;
     private Drawable mDefaultBackground;
     private DisplayMetrics mMetrics;
@@ -49,19 +52,25 @@ public class MainFragment extends BrowseFragment {
 
         loadRows();
 
-        setupEventListeners();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         setFavorite();
+
+        setupEventListeners();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == DetailsActivity.FAVORITE_CHANGED) {
+                setFavorite();
+            }
+        }
     }
 
     private void loadRows() {
@@ -129,7 +138,7 @@ public class MainFragment extends BrowseFragment {
                 intent.putExtra(DetailsActivity.APP, installedApp);
 
                 Log.d(TAG, "startActivity");
-                getActivity().startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         }
     }
