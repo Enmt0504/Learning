@@ -24,9 +24,27 @@ import android.widget.Toast;
 public class AppDetailsFragment extends DetailsFragment {
     private static final String TAG = "AppDetailsFragment";
 
-    private static final int ACTION_START_APP = 1;
-    private static final int ACTION_ADD_FAVORITE = 2;
-    private static final int ACTION_REMOVE_FAVORITE = 3;
+    public enum AppAction {
+        START_APP(1, R.string.start_app),
+        ADD_FAVORITE(2, R.string.add_favorite),
+        REMOVE_FAVORITE(3, R.string.remove_favorite);
+
+        private long id;
+        private final int strId;
+
+        private AppAction(final long id, final int strId) {
+            this.id = id;
+            this.strId = strId;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public int getStrId() {
+            return strId;
+        }
+    }
 
     private InstalledApp mSelectedApp;
 
@@ -83,13 +101,16 @@ public class AppDetailsFragment extends DetailsFragment {
 
         mAdapter.notifyArrayItemRangeChanged(0, mAdapter.size());
 
-        row.addAction(new Action(ACTION_START_APP, getResources().getString(R.string.start_app)));
+        row.addAction(new Action(AppAction.START_APP.getId(),
+                getResources().getString(AppAction.START_APP.getStrId())));
 
-        SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+        SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
         if (sp.getBoolean(mSelectedApp.getPackageName(), false)) {
-            row.addAction(new Action(ACTION_REMOVE_FAVORITE, getResources().getString(R.string.remove_favorite)));
+            row.addAction(new Action(AppAction.REMOVE_FAVORITE.getId(),
+                    getResources().getString(AppAction.REMOVE_FAVORITE.getStrId())));
         } else {
-            row.addAction(new Action(ACTION_ADD_FAVORITE, getResources().getString(R.string.add_favorite)));
+            row.addAction(new Action(AppAction.ADD_FAVORITE.getId(),
+                    getResources().getString(AppAction.ADD_FAVORITE.getStrId())));
         }
 
         mAdapter.add(row);
@@ -104,7 +125,7 @@ public class AppDetailsFragment extends DetailsFragment {
         detailsPresenter.setOnActionClickedListener(new OnActionClickedListener() {
             @Override
             public void onActionClicked(Action action) {
-                if (action.getId() == ACTION_START_APP) {
+                if (action.getId() == AppAction.START_APP.getId()) {
                     Intent intent = new Intent();
                     intent.setClassName(mSelectedApp.getPackageName(), mSelectedApp.getActivityName());
                     startActivity(intent);
@@ -117,22 +138,26 @@ public class AppDetailsFragment extends DetailsFragment {
     }
 
     private void updateFavorite(long id) {
-        SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+        SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
-        if (id == ACTION_ADD_FAVORITE) {
+        if (id == AppAction.ADD_FAVORITE.getId()) {
             editor.putBoolean(mSelectedApp.getPackageName(), true);
             if (editor.commit() == true) {
-                Toast.makeText(getActivity(), "add favorite", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.add_favorite),
+                        Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getActivity(), "failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.failed),
+                        Toast.LENGTH_SHORT).show();
             }
-        } else {
+        } else if (id == AppAction.REMOVE_FAVORITE.getId()) {
             editor.remove(mSelectedApp.getPackageName());
             if (editor.commit() == true) {
-                Toast.makeText(getActivity(), "remove favorite", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.remove_favorite),
+                        Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getActivity(), "failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.failed),
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }

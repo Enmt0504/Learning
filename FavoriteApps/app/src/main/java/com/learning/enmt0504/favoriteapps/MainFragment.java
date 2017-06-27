@@ -2,6 +2,7 @@ package com.learning.enmt0504.favoriteapps;
 
 import java.util.List;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -69,8 +70,7 @@ public class MainFragment extends BrowseFragment {
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
         ArrayObjectAdapter listRowAdapterApps = new ArrayObjectAdapter(new CardPresenter());
-        for (int i = 0; i < mList.size(); i++) {
-            InstalledApp installedApp = mList.get(i);
+        for (InstalledApp installedApp : mList) {
             listRowAdapterApps.add(installedApp);
         }
         HeaderItem header = new HeaderItem(1, InstalledAppList.CATEGORY[1]);
@@ -89,11 +89,10 @@ public class MainFragment extends BrowseFragment {
     }
 
     private void setFavorite() {
-        SharedPreferences sp = getContext().getSharedPreferences("favorite", Context.MODE_PRIVATE);
+        SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
 
         ArrayObjectAdapter listRowAdapterFavorite = new ArrayObjectAdapter(new CardPresenter());
-        for (int i = 0; i < mList.size(); i++) {
-            InstalledApp installedApp = mList.get(i);
+        for (InstalledApp installedApp : mList) {
             if (sp.getBoolean(installedApp.getPackageName(), false) == true) {
                 listRowAdapterFavorite.add(installedApp);
             }
