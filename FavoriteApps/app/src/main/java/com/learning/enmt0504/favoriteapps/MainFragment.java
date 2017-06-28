@@ -72,8 +72,21 @@ public class MainFragment extends BrowseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
-            if (resultCode == DetailsActivity.FAVORITE_CHANGED) {
-                setFavorite();
+            if (resultCode != DetailsActivity.FAVORITE_UNCHANGED) {
+                updateAdapter(resultCode, data.getStringExtra("packageName"));
+            }
+        }
+    }
+
+    private void updateAdapter(int resultCode, String packageName) {
+        for (InstalledApp installedApp : mList) {
+            if (installedApp.getPackageName().equals(packageName)) {
+                ArrayObjectAdapter adapter = ((ArrayObjectAdapter) ((ListRow) mRowsAdapter.get(0)).getAdapter());
+                if (resultCode == DetailsActivity.FAVORITE_ADDED) {
+                    adapter.add(installedApp);
+                } else if (resultCode == DetailsActivity.FAVORITE_REMOVED) {
+                    adapter.remove(installedApp);
+                }
             }
         }
     }

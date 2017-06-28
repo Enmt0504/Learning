@@ -131,6 +131,7 @@ public class AppDetailsFragment extends DetailsFragment {
                 if (action.getId() == AppAction.START_APP.getId()) {
                     Intent intent = new Intent();
                     intent.setClassName(mSelectedApp.getPackageName(), mSelectedApp.getActivityName());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } else {
                     updateFavorite(action.getId());
@@ -144,13 +145,15 @@ public class AppDetailsFragment extends DetailsFragment {
         SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
+        Intent data = new Intent();
+        data.putExtra("packageName", mSelectedApp.getPackageName());
 
         if (id == AppAction.ADD_FAVORITE.getId()) {
             editor.putLong(mSelectedApp.getPackageName(), System.currentTimeMillis());
             if (editor.commit() == true) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.add_favorite),
                         Toast.LENGTH_SHORT).show();
-                getActivity().setResult(DetailsActivity.FAVORITE_CHANGED);
+                getActivity().setResult(DetailsActivity.FAVORITE_ADDED, data);
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.failed),
                         Toast.LENGTH_SHORT).show();
@@ -160,7 +163,7 @@ public class AppDetailsFragment extends DetailsFragment {
             if (editor.commit() == true) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.remove_favorite),
                         Toast.LENGTH_SHORT).show();
-                getActivity().setResult(DetailsActivity.FAVORITE_CHANGED);
+                getActivity().setResult(DetailsActivity.FAVORITE_REMOVED, data);
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.failed),
                         Toast.LENGTH_SHORT).show();
