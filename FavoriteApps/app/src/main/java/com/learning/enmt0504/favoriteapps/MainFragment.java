@@ -1,6 +1,10 @@
 package com.learning.enmt0504.favoriteapps;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -22,6 +26,7 @@ import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,12 +105,28 @@ public class MainFragment extends BrowseFragment {
     private void setFavorite() {
         SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
 
+        Map<String, ?> map = sp.getAll();
+        List<Pair<String, Long>> list = new ArrayList<>();
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            list.add(new Pair<>(entry.getKey(), (Long) entry.getValue()));
+        }
+
+        Collections.sort(list, new Comparator<Pair<String, Long>>() {
+            @Override
+            public int compare(Pair<String, Long> stringLongPair, Pair<String, Long> t1) {
+                return stringLongPair.second.compareTo(t1.second);
+            }
+        });
+
         ArrayObjectAdapter listRowAdapterFavorite = new ArrayObjectAdapter(new CardPresenter());
-        for (InstalledApp installedApp : mList) {
-            if (sp.getBoolean(installedApp.getPackageName(), false) == true) {
-                listRowAdapterFavorite.add(installedApp);
+        for (Pair<String, Long> pair : list) {
+            for (InstalledApp installedApp : mList) {
+                if (pair.first.equals(installedApp.getPackageName())) {
+                    listRowAdapterFavorite.add(installedApp);
+                }
             }
         }
+
         HeaderItem header = new HeaderItem(0, InstalledAppList.CATEGORY[0]);
         if (mRowsAdapter.size() < InstalledAppList.CATEGORY.length) {
             mRowsAdapter.add(0, new ListRow(header, listRowAdapterFavorite));

@@ -108,7 +108,7 @@ public class AppDetailsFragment extends DetailsFragment {
                 getResources().getString(AppAction.START_APP.getStrId())));
 
         SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
-        if (sp.getBoolean(mSelectedApp.getPackageName(), false)) {
+        if (sp.getLong(mSelectedApp.getPackageName(), -1) != -1) {
             row.addAction(new Action(AppAction.REMOVE_FAVORITE.getId(),
                     getResources().getString(AppAction.REMOVE_FAVORITE.getStrId())));
         } else {
@@ -144,8 +144,9 @@ public class AppDetailsFragment extends DetailsFragment {
         SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
 
+
         if (id == AppAction.ADD_FAVORITE.getId()) {
-            editor.putBoolean(mSelectedApp.getPackageName(), true);
+            editor.putLong(mSelectedApp.getPackageName(), System.currentTimeMillis());
             if (editor.commit() == true) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.add_favorite),
                         Toast.LENGTH_SHORT).show();
