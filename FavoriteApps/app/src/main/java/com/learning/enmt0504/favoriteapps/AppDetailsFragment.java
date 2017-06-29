@@ -1,6 +1,5 @@
 package com.learning.enmt0504.favoriteapps;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +14,6 @@ import android.support.v17.leanback.widget.DetailsOverviewRow;
 import android.support.v17.leanback.widget.DetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -23,8 +21,6 @@ import android.widget.Toast;
  */
 
 public class AppDetailsFragment extends DetailsFragment {
-    private static final String TAG = "AppDetailsFragment";
-
     public enum AppAction {
         START_APP(1, R.string.start_app),
         ADD_FAVORITE(2, R.string.add_favorite),
@@ -58,7 +54,6 @@ public class AppDetailsFragment extends DetailsFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate DetailsFragment");
         super.onCreate(savedInstanceState);
 
         prepareBackgroundManager();

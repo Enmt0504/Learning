@@ -6,8 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,16 +18,12 @@ import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
-import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Created by enomoto on 17/06/21.
@@ -38,7 +32,7 @@ import android.view.ViewGroup;
 public class MainFragment extends BrowseFragment {
     private static final String TAG = "MainFragment";
 
-    private static int REQUEST_CODE = 123;
+    private static final int REQUEST_CODE = 123;
 
     private ArrayObjectAdapter mRowsAdapter;
     private Drawable mDefaultBackground;
@@ -57,8 +51,6 @@ public class MainFragment extends BrowseFragment {
 
         loadRows();
 
-        setFavorite();
-
         setupEventListeners();
     }
 
@@ -73,15 +65,16 @@ public class MainFragment extends BrowseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
             if (resultCode != DetailsActivity.FAVORITE_UNCHANGED) {
-                updateAdapter(resultCode, data.getStringExtra("packageName"));
+                updateFavorite(resultCode, data.getStringExtra("packageName"));
             }
         }
     }
 
-    private void updateAdapter(int resultCode, String packageName) {
+    private void updateFavorite(int resultCode, String packageName) {
         for (InstalledApp installedApp : mList) {
             if (installedApp.getPackageName().equals(packageName)) {
                 ArrayObjectAdapter adapter = ((ArrayObjectAdapter) ((ListRow) mRowsAdapter.get(0)).getAdapter());
+
                 if (resultCode == DetailsActivity.FAVORITE_ADDED) {
                     adapter.add(installedApp);
                 } else if (resultCode == DetailsActivity.FAVORITE_REMOVED) {
@@ -96,15 +89,11 @@ public class MainFragment extends BrowseFragment {
 
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
-        ArrayObjectAdapter listRowAdapterApps = new ArrayObjectAdapter(new CardPresenter());
-        for (InstalledApp installedApp : mList) {
-            listRowAdapterApps.add(installedApp);
-        }
-        HeaderItem header = new HeaderItem(1, InstalledAppList.CATEGORY[1]);
-        mRowsAdapter.add(new ListRow(header, listRowAdapterApps));
+        setFavorite();
+
+        setApps();
 
         setAdapter(mRowsAdapter);
-
     }
 
     private void prepareBackgroundManager() {
@@ -113,6 +102,15 @@ public class MainFragment extends BrowseFragment {
         mDefaultBackground = getResources().getDrawable(R.color.default_background);
         mMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
+    }
+
+    private void setApps() {
+        ArrayObjectAdapter listRowAdapterApps = new ArrayObjectAdapter(new CardPresenter());
+        for (InstalledApp installedApp : mList) {
+            listRowAdapterApps.add(installedApp);
+        }
+        HeaderItem header = new HeaderItem(1, InstalledAppList.CATEGORY[1]);
+        mRowsAdapter.add(new ListRow(header, listRowAdapterApps));
     }
 
     private void setFavorite() {
@@ -141,11 +139,7 @@ public class MainFragment extends BrowseFragment {
         }
 
         HeaderItem header = new HeaderItem(0, InstalledAppList.CATEGORY[0]);
-        if (mRowsAdapter.size() < InstalledAppList.CATEGORY.length) {
-            mRowsAdapter.add(0, new ListRow(header, listRowAdapterFavorite));
-        } else {
-            mRowsAdapter.replace(0, new ListRow(header, listRowAdapterFavorite));
-        }
+        mRowsAdapter.add(new ListRow(header, listRowAdapterFavorite));
     }
 
     private void setupUIElements() {
@@ -157,7 +151,6 @@ public class MainFragment extends BrowseFragment {
 
     private void setupEventListeners() {
         setOnItemViewClickedListener(new ItemViewClickedListener());
-        setOnItemViewSelectedListener(new ItemViewSelectedListener());
     }
 
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
@@ -167,21 +160,10 @@ public class MainFragment extends BrowseFragment {
 
             if (item instanceof InstalledApp) {
                 InstalledApp installedApp = (InstalledApp) item;
-                Log.d(TAG, "Item:"+item.toString());
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra(DetailsActivity.APP, installedApp);
 
-                Log.d(TAG, "startActivity");
                 startActivityForResult(intent, REQUEST_CODE);
-            }
-        }
-    }
-
-    private final class ItemViewSelectedListener implements OnItemViewSelectedListener {
-        @Override
-        public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
-                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
-            if (item instanceof InstalledApp) {
             }
         }
     }

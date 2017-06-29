@@ -28,16 +28,14 @@ public class InstalledAppList {
         list = new ArrayList<InstalledApp>();
 
         PackageManager pm = activity.getPackageManager();
-        Intent intent= new Intent(Intent.ACTION_MAIN, null);
+        Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> appList = pm.queryIntentActivities(intent, 0);
         intent.removeCategory(Intent.CATEGORY_LAUNCHER);
         intent.addCategory(Intent.CATEGORY_LEANBACK_LAUNCHER);
         appList.addAll(pm.queryIntentActivities(intent, 0));
 
-        for (int i = 0; i < appList.size(); i++) {
-            ResolveInfo info = appList.get(i);
-
+        for (ResolveInfo info : appList) {
             String packageName = info.activityInfo.packageName;
             if (packageName.equals(activity.getPackageName())) {
                 continue;
@@ -45,14 +43,14 @@ public class InstalledAppList {
 
             String label = info.loadLabel(pm).toString();
             String activityName = info.activityInfo.name;
-            Drawable icon = null;
-            Drawable banner = null;
+            Drawable icon = info.loadIcon(pm);
+            Drawable banner;
             try {
-                icon = activity.getPackageManager().getApplicationIcon(packageName);
-                banner = activity.getPackageManager().getApplicationBanner(packageName);
+                banner = pm.getApplicationBanner(packageName);
             } catch (PackageManager.NameNotFoundException e) {
                 // 存在するアプリケーションからpackageNameを持ってきているため,
                 // 見つからないことはないはず.
+                continue;
             }
 
             list.add(buildInstalledAppInfo(label, packageName, activityName, icon, banner));
