@@ -3,9 +3,7 @@ package com.learning.enmt0504.favoriteapps;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
@@ -15,7 +13,6 @@ import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 
@@ -35,17 +32,12 @@ public class MainFragment extends BrowseFragment {
     private static final int REQUEST_CODE = 123;
 
     private ArrayObjectAdapter mRowsAdapter;
-    private Drawable mDefaultBackground;
-    private DisplayMetrics mMetrics;
-    private BackgroundManager mBackgroundManager;
     private List<InstalledApp> mList;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
         super.onActivityCreated(savedInstanceState);
-
-        prepareBackgroundManager();
 
         setupUIElements();
 
@@ -106,17 +98,6 @@ public class MainFragment extends BrowseFragment {
     }
 
     /**
-     * 表示する背景の準備を行う
-     */
-    private void prepareBackgroundManager() {
-        mBackgroundManager = BackgroundManager.getInstance(getActivity());
-        mBackgroundManager.attach(getActivity().getWindow());
-        mDefaultBackground = getResources().getDrawable(R.color.default_background);
-        mMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
-    }
-
-    /**
      * インストール済みアプリ一覧をAdapterにセットする
      */
     private void setApps() {
@@ -168,7 +149,7 @@ public class MainFragment extends BrowseFragment {
         setTitle(getString(R.string.browse_title));
         setHeadersState(HEADERS_ENABLED);
         setHeadersTransitionOnBackEnabled(true);
-        setBrandColor(getResources().getColor(R.color.fastlane_background));
+        setBrandColor(getActivity().getColor(R.color.fastlane_background));
     }
 
     /**
@@ -179,18 +160,11 @@ public class MainFragment extends BrowseFragment {
     }
 
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
-        /**
-         * クリック時のイベントを設定する
-         * @param itemViewHolder
-         * @param item クリックされたObject
-         * @param rowViewHolder
-         * @param row
-         */
         @Override
         public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
-
             if (item instanceof InstalledApp) {
+                // クリックされたアプリの詳細表示に遷移する
                 InstalledApp installedApp = (InstalledApp) item;
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra(DetailsActivity.APP, installedApp);

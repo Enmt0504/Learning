@@ -3,17 +3,14 @@ package com.learning.enmt0504.favoriteapps;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.DetailsFragment;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
 import android.support.v17.leanback.widget.DetailsOverviewRow;
-import android.support.v17.leanback.widget.DetailsOverviewRowPresenter;
+import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
-import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 /**
@@ -26,10 +23,10 @@ public class AppDetailsFragment extends DetailsFragment {
         ADD_FAVORITE(2, R.string.add_favorite),
         REMOVE_FAVORITE(3, R.string.remove_favorite);
 
-        private long id;
+        private final long id;
         private final int strId;
 
-        private AppAction(final long id, final int strId) {
+        AppAction(final long id, final int strId) {
             this.id = id;
             this.strId = strId;
         }
@@ -48,15 +45,9 @@ public class AppDetailsFragment extends DetailsFragment {
     private ArrayObjectAdapter mAdapter;
     private ClassPresenterSelector mPresenterSelector;
 
-    private BackgroundManager mBackgroundManager;
-    private Drawable mDefaultBackground;
-    private DisplayMetrics mMetrics;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        prepareBackgroundManager();
 
         getActivity().setResult(DetailsActivity.FAVORITE_UNCHANGED);
 
@@ -70,19 +61,6 @@ public class AppDetailsFragment extends DetailsFragment {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    private void prepareBackgroundManager() {
-        mBackgroundManager = BackgroundManager.getInstance(getActivity());
-        mBackgroundManager.attach(getActivity().getWindow());
-        mDefaultBackground = getResources().getDrawable(R.color.default_background);
-        mMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
     }
 
     /**
@@ -99,7 +77,7 @@ public class AppDetailsFragment extends DetailsFragment {
      */
     private void setupDetailsOverviewRow() {
         final DetailsOverviewRow row = new DetailsOverviewRow(mSelectedApp);
-        row.setImageDrawable(getResources().getDrawable(R.color.default_background));
+        row.setImageDrawable(getActivity().getDrawable(R.color.default_background));
 
         row.setImageDrawable(mSelectedApp.getBanner());
 
@@ -126,10 +104,9 @@ public class AppDetailsFragment extends DetailsFragment {
      * ボタンが押された際の動作の設定
      */
     private void setupDetailsOverviewRowPresenter() {
-        DetailsOverviewRowPresenter detailsPresenter =
-                new DetailsOverviewRowPresenter(new DetailsDescriptionPresenter());
-        detailsPresenter.setBackgroundColor(getResources().getColor(R.color.selected_background));
-        detailsPresenter.setStyleLarge(true);
+        FullWidthDetailsOverviewRowPresenter detailsPresenter =
+                new FullWidthDetailsOverviewRowPresenter(new DetailsDescriptionPresenter());
+        detailsPresenter.setBackgroundColor(getActivity().getColor(R.color.selected_background));
 
         // 起動が押されたら表示しているアプリを起動する
         // 起動以外が押されたらupdateFavoriteを呼ぶ
@@ -164,7 +141,7 @@ public class AppDetailsFragment extends DetailsFragment {
 
         if (id == AppAction.ADD_FAVORITE.getId()) {
             editor.putLong(mSelectedApp.getPackageName(), System.currentTimeMillis());
-            if (editor.commit() == true) {
+            if (editor.commit()) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.add_favorite),
                         Toast.LENGTH_SHORT).show();
                 getActivity().setResult(DetailsActivity.FAVORITE_ADDED, data);
@@ -174,7 +151,7 @@ public class AppDetailsFragment extends DetailsFragment {
             }
         } else if (id == AppAction.REMOVE_FAVORITE.getId()) {
             editor.remove(mSelectedApp.getPackageName());
-            if (editor.commit() == true) {
+            if (editor.commit()) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.remove_favorite),
                         Toast.LENGTH_SHORT).show();
                 getActivity().setResult(DetailsActivity.FAVORITE_REMOVED, data);

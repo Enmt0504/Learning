@@ -53,8 +53,7 @@ public class InstalledApp implements Serializable {
     public Drawable getIcon() {
         if (icon != null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
-            Drawable iconDrawable = new BitmapDrawable(BitmapFactory.decodeByteArray(icon, 0, icon.length, options));
-            return iconDrawable;
+            return new BitmapDrawable(BitmapFactory.decodeByteArray(icon, 0, icon.length, options));
         }
 
         return null;
@@ -81,8 +80,7 @@ public class InstalledApp implements Serializable {
     public Drawable getBanner() {
         if (banner != null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
-            Drawable bannerDrawable = new BitmapDrawable(BitmapFactory.decodeByteArray(banner, 0, banner.length, options));
-            return bannerDrawable;
+            return new BitmapDrawable(BitmapFactory.decodeByteArray(banner, 0, banner.length, options));
         }
 
         return null;

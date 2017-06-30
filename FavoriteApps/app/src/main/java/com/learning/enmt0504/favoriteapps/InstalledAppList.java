@@ -19,18 +19,13 @@ public class InstalledAppList {
             "Apps"
     };
 
-    public static List<InstalledApp> list;
-
-    public InstalledAppList() {
-    }
-
     /**
      * インストール済みアプリの一覧をInstalledAppのListとして生成して返す
-     * @param activity
+     * @param activity 呼び出したアクティビティ
      * @return インストール済みアプリ一覧
      */
     public static List<InstalledApp> setupApps(Activity activity) {
-        list = new ArrayList<InstalledApp>();
+        List<InstalledApp> list = new ArrayList<>();
 
         PackageManager pm = activity.getPackageManager();
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
@@ -42,6 +37,8 @@ public class InstalledAppList {
 
         for (ResolveInfo info : appList) {
             String packageName = info.activityInfo.packageName;
+
+            // このアプリを一覧から除く
             if (packageName.equals(activity.getPackageName())) {
                 continue;
             }
@@ -55,7 +52,6 @@ public class InstalledAppList {
             } catch (PackageManager.NameNotFoundException e) {
                 // 存在するアプリケーションからpackageNameを持ってきているため,
                 // 見つからないことはないはず.
-                // もし見つからなかったら,listにaddせずに次へ
                 continue;
             }
 
