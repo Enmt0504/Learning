@@ -24,6 +24,11 @@ public class InstalledAppList {
     public InstalledAppList() {
     }
 
+    /**
+     * インストール済みアプリの一覧をInstalledAppのListとして生成して返す
+     * @param activity
+     * @return インストール済みアプリ一覧
+     */
     public static List<InstalledApp> setupApps(Activity activity) {
         list = new ArrayList<InstalledApp>();
 
@@ -50,6 +55,7 @@ public class InstalledAppList {
             } catch (PackageManager.NameNotFoundException e) {
                 // 存在するアプリケーションからpackageNameを持ってきているため,
                 // 見つからないことはないはず.
+                // もし見つからなかったら,listにaddせずに次へ
                 continue;
             }
 
@@ -59,6 +65,15 @@ public class InstalledAppList {
         return list;
     }
 
+    /**
+     * 受け取った情報を元にInstalledAppを生成して返す
+     * @param label アプリのラベル
+     * @param packageName アプリのパッケージ名
+     * @param activityName アプリのアクティビティ名
+     * @param icon アプリのアイコン
+     * @param banner アプリのバナー
+     * @return InstalledApp型のアプリの情報
+     */
     private static InstalledApp buildInstalledAppInfo(String label, String packageName,
                                                       String activityName, Drawable icon,
                                                       Drawable banner) {

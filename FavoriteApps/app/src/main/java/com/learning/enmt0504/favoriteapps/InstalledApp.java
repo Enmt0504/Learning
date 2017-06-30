@@ -46,6 +46,10 @@ public class InstalledApp implements Serializable {
         this.activityName = activityName;
     }
 
+    /**
+     * Byte[]で保持しているiconの画像データをDrawableに変換して返す
+     * @return 画像(Drawable)
+     */
     public Drawable getIcon() {
         if (icon != null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -56,6 +60,10 @@ public class InstalledApp implements Serializable {
         return null;
     }
 
+    /**
+     * Drawableで受け取った画像をByte[]に変換してiconとして保持する
+     * @param icon 画像(Drawable)
+     */
     public void setIcon(Drawable icon) {
         if (icon != null) {
             Bitmap bitmapIcon = ((BitmapDrawable) icon).getBitmap();
@@ -66,6 +74,10 @@ public class InstalledApp implements Serializable {
         }
     }
 
+    /**
+     * Byte[]で保持しているbannerの画像データをDrawableに変換して返す
+     * @return 画像(Drawable)
+     */
     public Drawable getBanner() {
         if (banner != null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -76,6 +88,10 @@ public class InstalledApp implements Serializable {
         return null;
     }
 
+    /**
+     * Drawableで受け取った画像をByte[]に変換してbannerとして保持する
+     * @param banner 画像(Drawable)
+     */
     public void setBanner(Drawable banner) {
         if (banner != null) {
             Bitmap bitmapBanner = ((BitmapDrawable) banner).getBitmap();

@@ -85,12 +85,18 @@ public class AppDetailsFragment extends DetailsFragment {
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
     }
 
+    /**
+     * Adapterの初期化を行う
+     */
     private void setupAdapter() {
         mPresenterSelector = new ClassPresenterSelector();
         mAdapter = new ArrayObjectAdapter(mPresenterSelector);
         setAdapter(mAdapter);
     }
 
+    /**
+     * アプリの情報とボタンの表示
+     */
     private void setupDetailsOverviewRow() {
         final DetailsOverviewRow row = new DetailsOverviewRow(mSelectedApp);
         row.setImageDrawable(getResources().getDrawable(R.color.default_background));
@@ -103,6 +109,8 @@ public class AppDetailsFragment extends DetailsFragment {
                 getResources().getString(AppAction.START_APP.getStrId())));
 
         SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+
+        // パッケージ名がFavoriteあるなら削除ボタンを,なければ追加ボタンを作る
         if (sp.getLong(mSelectedApp.getPackageName(), -1) != -1) {
             row.addAction(new Action(AppAction.REMOVE_FAVORITE.getId(),
                     getResources().getString(AppAction.REMOVE_FAVORITE.getStrId())));
@@ -114,12 +122,17 @@ public class AppDetailsFragment extends DetailsFragment {
         mAdapter.add(row);
     }
 
+    /**
+     * ボタンが押された際の動作の設定
+     */
     private void setupDetailsOverviewRowPresenter() {
         DetailsOverviewRowPresenter detailsPresenter =
                 new DetailsOverviewRowPresenter(new DetailsDescriptionPresenter());
         detailsPresenter.setBackgroundColor(getResources().getColor(R.color.selected_background));
         detailsPresenter.setStyleLarge(true);
 
+        // 起動が押されたら表示しているアプリを起動する
+        // 起動以外が押されたらupdateFavoriteを呼ぶ
         detailsPresenter.setOnActionClickedListener(new OnActionClickedListener() {
             @Override
             public void onActionClicked(Action action) {
@@ -136,6 +149,12 @@ public class AppDetailsFragment extends DetailsFragment {
         mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, detailsPresenter);
     }
 
+    /**
+     * SharedPreferencesに書かれたFavoriteの情報を更新する
+     * 追加ならパッケージ名と追加された時間を書き込む
+     * 削除ならそのパッケージ名の情報を削除する
+     * @param id 追加/削除
+     */
     private void updateFavorite(long id) {
         SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();

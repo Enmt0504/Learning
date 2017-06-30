@@ -1,11 +1,5 @@
 package com.learning.enmt0504.favoriteapps;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +18,12 @@ import android.support.v17.leanback.widget.RowPresenter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by enomoto on 17/06/21.
@@ -64,12 +64,18 @@ public class MainFragment extends BrowseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
+            // Favoriteに変化があったら更新処理を呼ぶ
             if (resultCode != DetailsActivity.FAVORITE_UNCHANGED) {
                 updateFavorite(resultCode, data.getStringExtra("packageName"));
             }
         }
     }
 
+    /**
+     * Favoriteとして表示するアプリの追加/削除を行う
+     * @param resultCode 更新を種類(追加か削除)
+     * @param packageName 追加/削除するアプリのパッケージ名
+     */
     private void updateFavorite(int resultCode, String packageName) {
         for (InstalledApp installedApp : mList) {
             if (installedApp.getPackageName().equals(packageName)) {
@@ -84,6 +90,9 @@ public class MainFragment extends BrowseFragment {
         }
     }
 
+    /**
+     * 画面に表示するアプリの設定を行う
+     */
     private void loadRows() {
         mList = InstalledAppList.setupApps(getActivity());
 
@@ -96,6 +105,9 @@ public class MainFragment extends BrowseFragment {
         setAdapter(mRowsAdapter);
     }
 
+    /**
+     * 表示する背景の準備を行う
+     */
     private void prepareBackgroundManager() {
         mBackgroundManager = BackgroundManager.getInstance(getActivity());
         mBackgroundManager.attach(getActivity().getWindow());
@@ -104,6 +116,9 @@ public class MainFragment extends BrowseFragment {
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(mMetrics);
     }
 
+    /**
+     * インストール済みアプリ一覧をAdapterにセットする
+     */
     private void setApps() {
         ArrayObjectAdapter listRowAdapterApps = new ArrayObjectAdapter(new CardPresenter());
         for (InstalledApp installedApp : mList) {
@@ -113,6 +128,10 @@ public class MainFragment extends BrowseFragment {
         mRowsAdapter.add(new ListRow(header, listRowAdapterApps));
     }
 
+    /**
+     * Favoriteに登録したアプリ一覧をAdapterにセットする
+     * 順番は登録順
+     */
     private void setFavorite() {
         SharedPreferences sp = getContext().getSharedPreferences(getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
 
@@ -142,6 +161,9 @@ public class MainFragment extends BrowseFragment {
         mRowsAdapter.add(new ListRow(header, listRowAdapterFavorite));
     }
 
+    /**
+     * UIの初期化を行う
+     */
     private void setupUIElements() {
         setTitle(getString(R.string.browse_title));
         setHeadersState(HEADERS_ENABLED);
@@ -149,11 +171,21 @@ public class MainFragment extends BrowseFragment {
         setBrandColor(getResources().getColor(R.color.fastlane_background));
     }
 
+    /**
+     * EventListenerの初期化を行う
+     */
     private void setupEventListeners() {
         setOnItemViewClickedListener(new ItemViewClickedListener());
     }
 
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
+        /**
+         * クリック時のイベントを設定する
+         * @param itemViewHolder
+         * @param item クリックされたObject
+         * @param rowViewHolder
+         * @param row
+         */
         @Override
         public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
